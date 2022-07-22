@@ -29,5 +29,6 @@ jobs:
           else
             git config --global user.name 'github-actions'
             git config --global user.email 'github-actions@github.com'
+            git add ./genesis-idunion
             git commit -m "Updating genesis files"
             git push

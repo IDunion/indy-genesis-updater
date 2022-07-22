@@ -24,7 +24,7 @@ FROM debian:buster-slim
 USER root
 RUN apt-get update && apt-get install ca-certificates -y && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /app/target/release/genesis-updater /app/
+COPY --from=builder /app/target/release/indy-genesis-updater /app/
 COPY --from=builder /app/licenses.html /app/
 ENV RUST_LOG=info
 
@@ -32,4 +32,4 @@ WORKDIR /app
 RUN printf "General information about third-party software components and their licenses, \
 which are distributed with this image, can be found in the the licenses.html \
 file distributed with this image at /app/licenses.html."
-ENTRYPOINT ["/app/genesis-updater"]
+ENTRYPOINT ["/app/indy-genesis-updater"]
