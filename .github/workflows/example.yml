@@ -1,0 +1,33 @@
+on:
+  schedule:
+    - cron: '0 0 * * 1' #every monday at 00:00
+
+jobs:
+  prepare-vm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+  update-genesis:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/idunion/indy-genesis-updater/indy-genesis-updater
+      volumes:
+        - ./gensis-idunion:/app/genesis/
+    steps:
+      - name: Update genesis file for test network
+        run: /app/genesis-updater -g ./genesis/pool-idunion-test -o ./genssis/pool-idunion-test
+      - name: Update genesis file for mvp network
+        run: /app/genesis-updater -g ./genesis/pool-idunion-mvp -o ./genssis/pool-idunion-mvp
+  commit-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push changes to github
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No Changes"
+          else
+            git config --global user.name 'github-actions'
+            git config --global user.email 'github-actions@github.com'
+            git commit -m "Updating genesis files"
+            git push
