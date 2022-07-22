@@ -5,25 +5,20 @@ on:
 
 
 jobs:
-  prepare-vm:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
   update-genesis:
-    needs: [prepare-vm]
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/idunion/indy-genesis-updater/indy-genesis-updater
-      volumes:
-        - genesis-idunion:/app/genesis/
+      options: -v ${{ github.workspace }}/genesis-idunion:/app/genesis/
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Update genesis file for test network
         run: /app/indy-genesis-updater -g /app/genesis/pool-idunion-test -o /app/genesis/pool-idunion-test
       - name: Update genesis file for mvp network
         run: /app/indy-genesis-updater -g /app/genesis/pool-idunion-mvp -o /app/genesis/pool-idunion-mvp
   commit-changes:
-    needs: [prepare-vm, update-genesis]
+    needs: [update-genesis]
     runs-on: ubuntu-latest
     steps:
       - name: Push changes to github
