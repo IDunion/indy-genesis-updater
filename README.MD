@@ -5,9 +5,18 @@ The tool heavily depends on indy-vdr
 
 ### CLI options
 ```
-    -f, --genesis-filename <GENESIS_FILENAME>
-            Pool transaction genesis filename [default: pool_transactions_genesis.json]
+    -g, --genesis-file <GENESIS_FILE>
+            Path to the pool transactions genesis file [default: ./pool_transactions_genesis]
 
+    -h, --help
+            Print help information
+
+    -o, --output-file <OUTPUT_FILE>
+            Path to the output file [default: ./pool_transactions_genesis]
+
+    -u, --update-write
+            Always write output file (otherwise the output file is only written if updates were
+            found)
 
     -V, --version
             Print version information
