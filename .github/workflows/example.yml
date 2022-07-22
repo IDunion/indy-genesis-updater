@@ -19,9 +19,9 @@ jobs:
         - genesis-idunion:/app/genesis/
     steps:
       - name: Update genesis file for test network
-        run: /app/genesis-updater -g /app/genesis/pool-idunion-test -o /app/genssis/pool-idunion-test
+        run: /app/indy-genesis-updater -g /app/genesis/pool-idunion-test -o /app/genesis/pool-idunion-test
       - name: Update genesis file for mvp network
-        run: /app/genesis-updater -g /app/genesis/pool-idunion-mvp -o /app/genssis/pool-idunion-mvp
+        run: /app/indy-genesis-updater -g /app/genesis/pool-idunion-mvp -o /app/genesis/pool-idunion-mvp
   commit-changes:
     needs: [prepare-vm, update-genesis]
     runs-on: ubuntu-latest
