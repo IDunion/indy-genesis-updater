@@ -7,20 +7,21 @@ on:
 jobs:
   update-genesis:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/idunion/indy-genesis-updater/indy-genesis-updater
-      options: -v ${{ github.workspace }}/genesis-idunion:/app/genesis/
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Update genesis file for test network
-        run: /app/indy-genesis-updater -g /app/genesis/pool-idunion-test -o /app/genesis/pool-idunion-test
-      - name: Update genesis file for mvp network
-        run: /app/indy-genesis-updater -g /app/genesis/pool-idunion-mvp -o /app/genesis/pool-idunion-mvp
-  commit-changes:
-    needs: [update-genesis]
-    runs-on: ubuntu-latest
-    steps:
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ghcr.io/idunion/indy-genesis-updater/indy-genesis-updater
+          options: -v ${{ github.workspace }}/genesis-idunion:/app/genesis/
+          run: /app/indy-genesis-updater -g /app/genesis/pool-idunion-test -o /app/genesis/pool-idunion-test
+      - name: Update genesis file for test network
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ghcr.io/idunion/indy-genesis-updater/indy-genesis-updater
+          options: -v ${{ github.workspace }}/genesis-idunion:/app/genesis/
+          run: /app/indy-genesis-updater -g /app/genesis/pool-idunion-mvp -o /app/genesis/pool-idunion-mvp
       - name: Push changes to github
         run: |
           if [ -z "$(git status --porcelain)" ]; then
