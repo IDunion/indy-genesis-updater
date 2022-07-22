@@ -1,6 +1,8 @@
 on:
   schedule:
     - cron: '0 0 * * 1' #every monday at 00:00
+  workflow_dispatch:
+
 
 jobs:
   prepare-vm:
@@ -16,9 +18,9 @@ jobs:
         - ./gensis-idunion:/app/genesis/
     steps:
       - name: Update genesis file for test network
-        run: /app/genesis-updater -g ./genesis/pool-idunion-test -o ./genssis/pool-idunion-test
+        run: /app/genesis-updater -g /app/genesis/pool-idunion-test -o /app/genssis/pool-idunion-test
       - name: Update genesis file for mvp network
-        run: /app/genesis-updater -g ./genesis/pool-idunion-mvp -o ./genssis/pool-idunion-mvp
+        run: /app/genesis-updater -g /app/genesis/pool-idunion-mvp -o /app/genssis/pool-idunion-mvp
   commit-changes:
     runs-on: ubuntu-latest
     steps:
