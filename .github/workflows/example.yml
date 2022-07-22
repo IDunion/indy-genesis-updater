@@ -11,17 +11,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
   update-genesis:
+    needs: [prepare-vm]
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/idunion/indy-genesis-updater/indy-genesis-updater
       volumes:
-        - ./gensis-idunion:/app/genesis/
+        - genesis-idunion:/app/genesis/
     steps:
       - name: Update genesis file for test network
         run: /app/genesis-updater -g /app/genesis/pool-idunion-test -o /app/genssis/pool-idunion-test
       - name: Update genesis file for mvp network
         run: /app/genesis-updater -g /app/genesis/pool-idunion-mvp -o /app/genssis/pool-idunion-mvp
   commit-changes:
+    needs: [prepare-vm, update-genesis]
     runs-on: ubuntu-latest
     steps:
       - name: Push changes to github
