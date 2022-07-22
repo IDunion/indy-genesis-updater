@@ -16,7 +16,7 @@ jobs:
           image: ghcr.io/idunion/indy-genesis-updater/indy-genesis-updater
           options: -v ${{ github.workspace }}/genesis-idunion:/app/genesis/
           run: /app/indy-genesis-updater -g /app/genesis/pool-idunion-test -o /app/genesis/pool-idunion-test
-      - name: Update genesis file for test network
+      - name: Update genesis file for mvp network
         uses: addnab/docker-run-action@v3
         with:
           image: ghcr.io/idunion/indy-genesis-updater/indy-genesis-updater
