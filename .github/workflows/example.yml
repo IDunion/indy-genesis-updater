@@ -1,0 +1,53 @@
+on:
+  schedule:
+    - cron: '0 0 * * 1' #every monday at 00:00
+  workflow_dispatch:
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    outputs:
+      networks: ${{ steps.list.outputs.networks }}
+      date: ${{ steps.list.outputs.date }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: List Networks
+        id: list
+        shell: bash
+        run: |
+          echo "networks=$(echo $(find networks -name '*pool*') | jq -c -R 'split(" ")')">>$GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d')">>$GITHUB_OUTPUT
+  update:
+    needs: checkout
+    strategy:
+      matrix:
+        network: ${{ fromJson(needs.checkout.outputs.networks) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Update genesis file
+        uses: docker://ghcr.io/idunion/indy-genesis-updater/indy-genesis-updater
+        with:
+          args: -g /github/workspace/${{ matrix.network }} -o /github/workspace/${{ matrix.network }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: update ${{ matrix.network }} on ${{ needs.checkout.outputs.date }}
+          committer: GitHub <noreply@github.com>
+          author: GitHub <noreply@github.com>
+          signoff: false
+          branch: ${{ matrix.network }}-${{ needs.checkout.outputs.date }}
+          delete-branch: true
+          title: Updated ${{ matrix.network }}
+          add-paths: |
+            networks/
+          body: |
+            Update Genesis file for:
+            - ${{ matrix.network }}
+          labels: |
+            automated pr
+          team-reviewers: |
+            maintainers
+          draft: false
